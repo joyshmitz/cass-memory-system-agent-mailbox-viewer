@@ -25,7 +25,7 @@
     rel="stylesheet">
 
   <script>
-    (function () {
+    (() => {
       try {
         const stored = localStorage.getItem('darkMode');
         const prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -86,14 +86,14 @@
 
   <!-- Hold Alpine startup until our controllers register -->
   <script>
-    window.deferLoadingAlpine = function (alpineInit) {
+    window.deferLoadingAlpine = (alpineInit) => {
       window.__alpineStart = alpineInit;
     }
   </script>
 
   <!-- Remove any legacy html-level Alpine bindings before Alpine starts -->
   <script>
-    (function () {
+    (() => {
       try {
         var html = document.documentElement;
         html.removeAttribute('x-data');
@@ -1271,12 +1271,12 @@
   </script>
   <script>
     // Legacy compatibility: seed #message-list from exported data for smoke tests
-    (function () {
+    (() => {
       function ready(fn) {
         if (document.readyState !== 'loading') fn();
         else document.addEventListener('DOMContentLoaded', fn);
       }
-      ready(async function () {
+      ready(async () => {
         try {
           var list = document.getElementById('message-list');
           if (!list) return;

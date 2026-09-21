@@ -26,9 +26,7 @@
     "chunk_threshold": 20971520,
     "detach_threshold": 26214400,
     "inline_threshold": 65536,
-    "projects": [
-      "/Users/jemanuel/projects/cass_memory_system"
-    ],
+    "projects": ["/Users/jemanuel/projects/cass_memory_system"],
     "scrub_preset": "standard"
   },
   "exporter_version": "prototype",
@@ -37,9 +35,7 @@
     "detected": [
       {
         "id": "github_pages",
-        "signals": [
-          "Git remote: https://github.com/Dicklesworthstone/mcp_agent_mail"
-        ],
+        "signals": ["Git remote: https://github.com/Dicklesworthstone/mcp_agent_mail"],
         "summary": "Deploy the bundle via docs/ or gh-pages branch with coi-serviceworker.js for cross-origin isolation.",
         "title": "GitHub Pages"
       }
@@ -57,9 +53,7 @@
       }
     ],
     "removed_count": 3,
-    "requested": [
-      "/Users/jemanuel/projects/cass_memory_system"
-    ]
+    "requested": ["/Users/jemanuel/projects/cass_memory_system"]
   },
   "schema_version": "0.1.0",
   "scrub": {

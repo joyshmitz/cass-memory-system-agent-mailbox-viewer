@@ -10,16 +10,16 @@
  * License: MIT
  */
 
-if (typeof window === 'undefined') {
+if (typeof window === "undefined") {
   // Service Worker context
-  self.addEventListener('install', () => self.skipWaiting());
-  self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+  self.addEventListener("install", () => self.skipWaiting());
+  self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
-  self.addEventListener('fetch', (event) => {
+  self.addEventListener("fetch", (event) => {
     const request = event.request;
 
     // Only intercept same-origin requests
-    if (request.cache === 'only-if-cached' && request.mode !== 'same-origin') {
+    if (request.cache === "only-if-cached" && request.mode !== "same-origin") {
       return;
     }
 
@@ -32,8 +32,8 @@ if (typeof window === 'undefined') {
           }
 
           const newHeaders = new Headers(response.headers);
-          newHeaders.set('Cross-Origin-Embedder-Policy', 'require-corp');
-          newHeaders.set('Cross-Origin-Opener-Policy', 'same-origin');
+          newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+          newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
 
           return new Response(response.body, {
             status: response.status,
@@ -42,27 +42,28 @@ if (typeof window === 'undefined') {
           });
         })
         .catch((error) => {
-          console.error('Service worker fetch error:', error);
-          return new Response('Service worker fetch failed', { status: 503 });
-        })
+          console.error("Service worker fetch error:", error);
+          return new Response("Service worker fetch failed", { status: 503 });
+        }),
     );
   });
 } else {
   // Main thread context - registration code
   (() => {
-    const reloadedBySelf = window.sessionStorage.getItem('coi-reloaded');
+    const reloadedBySelf = window.sessionStorage.getItem("coi-reloaded");
 
     // Avoid infinite reload loops
-    if (reloadedBySelf === 'true') {
-      window.sessionStorage.removeItem('coi-reloaded');
+    if (reloadedBySelf === "true") {
+      window.sessionStorage.removeItem("coi-reloaded");
       return;
     }
 
-    const coiScriptElement = document.currentScript || document.querySelector('script[src*="coi-serviceworker"]');
+    const coiScriptElement =
+      document.currentScript || document.querySelector('script[src*="coi-serviceworker"]');
     const coiScriptSrc = coiScriptElement?.src;
 
     if (!coiScriptSrc) {
-      console.error('Could not determine coi-serviceworker.js URL');
+      console.error("Could not determine coi-serviceworker.js URL");
       return;
     }
 
@@ -72,34 +73,32 @@ if (typeof window === 'undefined') {
     }
 
     // Register service worker
-    navigator.serviceWorker
-      .register(coiScriptSrc)
-      .then(
-        (registration) => {
-          console.log('[COI] Service worker registered:', registration.scope);
+    navigator.serviceWorker.register(coiScriptSrc).then(
+      (registration) => {
+        console.log("[COI] Service worker registered:", registration.scope);
 
-          // Wait for service worker to be ready
-          registration.addEventListener('updatefound', () => {
-            console.log('[COI] Service worker update found');
-          });
+        // Wait for service worker to be ready
+        registration.addEventListener("updatefound", () => {
+          console.log("[COI] Service worker update found");
+        });
 
-          if (registration.active && !navigator.serviceWorker.controller) {
-            // Service worker is active but not controlling the page yet
-            window.sessionStorage.setItem('coi-reloaded', 'true');
+        if (registration.active && !navigator.serviceWorker.controller) {
+          // Service worker is active but not controlling the page yet
+          window.sessionStorage.setItem("coi-reloaded", "true");
+          window.location.reload();
+        }
+
+        // Listen for controlling service worker changes
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!reloadedBySelf) {
+            window.sessionStorage.setItem("coi-reloaded", "true");
             window.location.reload();
           }
-
-          // Listen for controlling service worker changes
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!reloadedBySelf) {
-              window.sessionStorage.setItem('coi-reloaded', 'true');
-              window.location.reload();
-            }
-          });
-        },
-        (error) => {
-          console.error('[COI] Service worker registration failed:', error);
-        }
-      );
+        });
+      },
+      (error) => {
+        console.error("[COI] Service worker registration failed:", error);
+      },
+    );
   })();
 }
